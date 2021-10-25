@@ -1,18 +1,63 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
+import validator from "validator";
+import { useDispatch } from "react-redux";
+import { loginFailure, loginSuccess } from "../redux/actionCreator";
 
 const Login = () => {
-  useEffect(() => {
-    console.log("Runnign");
-    axios.get("http://localhost:5000/api/user").then((res) => {
-      console.log("res: ", res);
-    });
-  }, []);
+  const [password, setPassword] = useState("Mona@123");
+  const [email, setEmail] = useState("mohinipatel571@gmail.com");
+  const [errorPassword, setErrorPassword] = useState(false);
+  const [errorEmail, setErrorEmail] = useState(false);
+  const { errorMsg, errorFound } = useState(false);
+  const dispatch = useDispatch();
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    axios
+      .post("http://localhost:5000/api/authUser", {
+        email,
+        password,
+      })
+      .then((res) => {
+        setEmail("");
+        setPassword("");
+        // alert(res.data.message);
+        console.log("Mona", res.data);
+        dispatch(loginSuccess(res.data));
+      })
+      .catch((err) => {
+        console.log("Abhishek", err.message);
+        dispatch(loginFailure(err.message));
+      });
+  };
+
+  // useEffect(() => {
+  //   console.log("Runnign");
+  //   axios.get("http://localhost:5000/api/user").then((res) => {
+  //     console.log("res: ", res);
+  //   });
+  // }, []);
+  const checkPass = (value) => {
+    setPassword(value);
+    if (
+      validator.isStrongPassword(value, {
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+      })
+    ) {
+      setErrorPassword(false);
+    } else {
+      setErrorPassword(true);
+    }
+  };
   return (
     <div className="auth-wrapper">
       <div className="auth-inner">
-        <form>
+        <form onSubmit={handleSubmit}>
           <h3>Sign In</h3>
 
           <div className="form-group">
@@ -21,7 +66,26 @@ const Login = () => {
               type="email"
               className="form-control"
               placeholder="Enter email"
+              value={email}
+              required
+              onChange={(event) => {
+                setEmail(event.target.value);
+                var emailRegex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/;
+                if (email.match(emailRegex)) {
+                  setErrorEmail(false);
+                } else {
+                  setErrorEmail(true);
+                }
+              }}
             />
+            {errorEmail ? (
+              <span className="text-danger small">
+                Please Enter Valid Email !
+              </span>
+            ) : null}
+            {errorFound ? (
+              <span className="text-danger small">{errorMsg}</span>
+            ) : null}
           </div>
 
           <div className="form-group">
@@ -30,7 +94,18 @@ const Login = () => {
               type="password"
               className="form-control"
               placeholder="Enter password"
+              value={password}
+              required
+              onChange={(event) => {
+                checkPass(event.target.value);
+              }}
             />
+            {errorPassword ? (
+              <span className="text-danger small">
+                Password must contain atleast 8-digit long, 1 uppercase letter,
+                1 lowercase and 1 numeric digit in it
+              </span>
+            ) : null}
           </div>
 
           <div className="form-group">

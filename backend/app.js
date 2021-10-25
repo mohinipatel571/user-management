@@ -1,10 +1,13 @@
 const express = require("express");
 const http = require("http");
 const path = require("path");
-// require("dotenv").config();
+
 const bodyParser = require("body-parser");
 const userRouter = require("./router/userRouter");
-var fileUpload = require('express-fileupload');
+const userLogin = require("./router/userLogin");
+
+var fileUpload = require("express-fileupload");
+const userschema = require("./db/mogooseschema");
 
 const hostname = "0.0.0.0";
 const port = process.env.PORT || 5000;
@@ -21,6 +24,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // for parsing multipart/form-data
 
 app.use("/api/user", userRouter);
+
+app.use("/api/authUser", userLogin);
 app.use((req, res, next) => {
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/html");

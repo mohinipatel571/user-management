@@ -3,20 +3,9 @@ const bodyParser = require("body-parser");
 const db = require("../db/mongo");
 const userschema = require("../db/mogooseschema");
 const fs = require("fs");
-// const multer = require("multer");
+
 const userRouter = express.Router();
 userRouter.use(bodyParser.json());
-
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "public");
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, Date.now() + "-" + file.originalname);
-//   },
-// });
-
-// const upload = multer({ storage: storage }).single("file");
 
 userRouter
   .route("/")
@@ -45,6 +34,7 @@ userRouter
         res.json({ error: err.message });
       });
   })
+
   .post((req, res, next) => {
     // const userData = req.body;
     const currentDate = Date.now();

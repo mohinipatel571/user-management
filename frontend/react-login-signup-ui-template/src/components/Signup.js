@@ -3,7 +3,7 @@ import validator from "validator";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useHistory } from "react-router-dom";
 const Signup = () => {
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
@@ -16,7 +16,7 @@ const Signup = () => {
   const [errorEmail, setErrorEmail] = useState(false);
   const { errorMsg, errorFound } = useState(false);
   const [filedata, setFiledata] = useState("");
-
+  const history = useHistory();
   const handleSubmit = (event) => {
     event.preventDefault();
     setIsDisable(true);
@@ -60,6 +60,10 @@ const Signup = () => {
           progress: undefined,
           // type: "success",
         });
+        setTimeout(() => {
+          history.push("/sign-in");
+        }, 1500);
+
         // <ModalSmall />;
       });
   };
@@ -84,7 +88,7 @@ const Signup = () => {
       <div className="auth-wrapper">
         <div className="auth-inner">
           <form onSubmit={handleSubmit}>
-            <h3>Add User</h3>
+            <h3>Sign Up</h3>
 
             <div className="form-group">
               <label>First name</label>
@@ -213,10 +217,10 @@ const Signup = () => {
               data-target=".bd-example-modal-sm"
               disabled={IsDisable}
             >
-              Add User
+              Sign Up
             </button>
             <p className="forgot-password text-right">
-              Already registered <a href="#">sign in?</a>
+              Already registered <a href="/sign-in">sign in?</a>
             </p>
           </form>
           <ToastContainer />
